@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  background-color: #041388;
+  color: #fff;
+  text-align: center;
+  padding: 4px 0;
+  margin-bottom: 15px;
+}
+
+aside {
+  width: 200px;
+  padding: 15px;
+  float: left;
+}
+
+main {
+  margin-left: 270px;
+  margin-right: 20px;
+}
+
+#current,
+#forecast {
+  margin-bottom: 20px;
+  padding: 20px;
+}
