@@ -13,14 +13,18 @@
         </header>
         <aside>
             <h2>Search for a City</h2>
-            <input type="search">
-            <button id="search">Search</button>
+            <form id="search-form">
+            <input id="search-input" type="text" placeholder="Search for a city">
+            <button id="btn">Search</button>
+            <div id="search-history"></div>
+            </form>
         </aside>
         <main>
-            <section id="current"></section>
-            <h3></h3>
-            <section id="forecast">
-                <h3>5-Day Forecast:</h3>
+            <section id="result">
+            <div id="my-city"></div>
+            <div id="forecast">
+            <h3>5-Day Forecast:</h3>
+            </div>
             </section>
         </main>
     <script src="assets/js/script.js"></script>

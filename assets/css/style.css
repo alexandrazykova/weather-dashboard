@@ -23,8 +23,7 @@ main {
   margin-right: 20px;
 }
 
-#current,
-#forecast {
+#result {
   margin-bottom: 20px;
   padding: 20px;
 }
