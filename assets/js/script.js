@@ -25,7 +25,7 @@ function printResults(resultObj) {
     bodyContentEl.innerHTML = resultObj.name;
 
     if (resultObj.name) {
-        bodyContentEl.innerHTML += resultObj.name.join();
+        bodyContentEl.innerHTML += resultObj.name;
     } else {
         bodyContentEl.innerHTML += 'No subject for this entry.';
     }
@@ -39,6 +39,8 @@ function printResults(resultObj) {
 function searchApi(searchInputVal) {
     var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInputVal + "&appid=" + APIKey;
 
+   try {
+
     fetch(queryURL)
         .then(function (response) {
             if (!response.ok) {
@@ -47,7 +49,7 @@ function searchApi(searchInputVal) {
             return response.json();
         })
         .then(function (dataRes) {
-            console.log(dataRes);
+            console.log(dataRes.name);
 
 
             if (!dataRes.name) {
@@ -57,11 +59,12 @@ function searchApi(searchInputVal) {
                 resultContentEl.textContent = '';
                 printResults(dataRes);
             }
-        }
-            .catch(function (error) {
-                console.error(error);
-            })
-)}
+        })
+} catch (error) {
+    console.log(error);
+}
+}
+
 
 function handleSearchFormSubmit(event) {
     event.preventDefault();
