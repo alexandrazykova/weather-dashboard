@@ -6,13 +6,6 @@ var searchBtn = document.querySelector('#btn');
 var searchInputEl = document.querySelector('#search-input');
 var searchHistoryEl = document.querySelector('#search-history');
 
-// Function to save the search history
-function saveSearchHistory(cityName) {
-    var historyItem = document.createElement('div');
-    historyItem.textContent = cityName;
-    searchHistoryEl.prepend(historyItem);
-}
-
 // Displays received results on the page
 function printResults(resultObj) {
     console.log(resultObj);
@@ -49,6 +42,7 @@ function printResults(resultObj) {
     var windEl = document.createElement('p');
     windEl.textContent = "Wind speed: " + resultObj.wind.speed;
 
+// Appends all the results on the page
     resultBody.append(cityName);
     resultBody.append(bodyContentEl);
     resultBody.append(weatherIconEl);
@@ -59,7 +53,7 @@ function printResults(resultObj) {
 
 };
 
-
+// API fetch
 function searchApi(searchInputVal) {
     var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInputVal + "&appid=" + APIKey + "&units=metric";
 
@@ -82,8 +76,6 @@ function searchApi(searchInputVal) {
                 } else {
                     resultContentEl.textContent = '';
                     printResults(dataRes);
-                    saveSearchHistory(dataRes.name);
-
                 }
             })
     } catch (error) {
@@ -91,6 +83,7 @@ function searchApi(searchInputVal) {
     }
 }
 
+// Search for 5-day forecast of the selected city
 function searchForecast(cityName) {
     var forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${APIKey}&units=metric`;
 
@@ -104,8 +97,7 @@ function searchForecast(cityName) {
                 return response.json();
             })
             .then(function (dataRes) {
-                console.log(dataRes);
-                console.log(dataRes.list[7].main.temp);
+                //console.log(dataRes.list[7].main.temp);
 
                 for (var i = 7; i < dataRes.list.length; i += 8) {
                     console.log(dataRes.list[i].main.temp);
@@ -115,9 +107,28 @@ function searchForecast(cityName) {
     } catch (error) {
         console.log(error);
     }
+}
+
+// Displays 5-day forecast of the selecred city
+function printForecastResults(dataRes) {
+
+    var forecastCard = document.createElement('div');
+    forecastCard.classList.add('card');
+    resultContentEl.append(forecastCard);
+
+    var forecastBody = document.createElement('div');
+    forecastBody.classList.add('card-body');
+    forecastCard.append(forecastBody);
+
+    var forecastContentEl = document.createElement('p');
+    var forecastTempEl = document.createElement('p');
+    forecastTempEl.textContent = "Temperature: " + dataRes.main.temp;
+
+    forecastBody.append(forecastTempEl);
 
 }
 
+// Handling input search
 function handleSearchFormSubmit(event) {
     event.preventDefault();
 
@@ -127,10 +138,10 @@ function handleSearchFormSubmit(event) {
         console.error('Please enter you search');
         return;
     }
-
     searchApi(searchInputVal);
     searchForecast(searchInputVal);
     searchInputEl.value = '';
 }
 
+// Event listener for the button
 searchBtn.addEventListener('click', handleSearchFormSubmit); 
