@@ -13,37 +13,50 @@ function saveSearchHistory(cityName) {
     searchHistoryEl.prepend(historyItem);
 }
 
+// Displays received results on the page
 function printResults(resultObj) {
     console.log(resultObj);
 
-    // set up `<div>` to hold result content
+    // set up elements to hold result content
     var resultCard = document.createElement('div');
     resultCard.classList.add('card');
     resultContentEl.append(resultCard);
 
-    console.log(resultCard);
     var resultBody = document.createElement('div');
     resultBody.classList.add('card-body');
     resultCard.append(resultBody);
 
     var cityName = document.createElement('h3');
-    cityName.textContent = resultObj.name;
+    cityName.textContent = "City: " + resultObj.name;
+
+    var bodyContentEl = document.createElement('p');
+    var dateEl = document.createElement('p');
+    dateEl.textContent = "Date " + resultObj.coord.date;
+
+    var bodyContentEl = document.createElement('p');
+    var weatherIconEl = document.createElement('p');
+    weatherIconEl.textContent = "Icon: " + resultObj.weather[0].icon;
+
+    var bodyContentEl = document.createElement('p');
+    var tempEl = document.createElement('p');
+    tempEl.textContent = "Temperature: " + resultObj.main.temp;
+
+    var bodyContentEl = document.createElement('p');
+    var humidityEl = document.createElement('p');
+    humidityEl.textContent = "Humidity: " + resultObj.main.humidity;
 
     var bodyContentEl = document.createElement('p');
     var windEl = document.createElement('p');
-    windEl.textContent = resultObj.wind.speed;
+    windEl.textContent = "Wind speed: " + resultObj.wind.speed;
 
-    if (resultObj.name) {
-        bodyContentEl.innerHTML += resultObj.name;
-    } else {
-        bodyContentEl.innerHTML += 'No subject for this entry.';
-    }
-
-    resultBody.appendChild(cityName);
-    resultBody.appendChild(bodyContentEl);
+    resultBody.append(cityName);
+    resultBody.append(bodyContentEl);
+    resultBody.append(weatherIconEl);
+    resultBody.append(tempEl);
+    resultBody.append(humidityEl);
     resultBody.append(windEl);
+    resultBody.append(dateEl);
 
-    console.log(resultContentEl);
 };
 
 
