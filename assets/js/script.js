@@ -5,6 +5,32 @@ var resultContentEl = document.getElementById('result-content');
 var searchBtn = document.querySelector('#btn');
 var searchInputEl = document.querySelector('#search-input');
 var searchHistoryEl = document.querySelector('#search-history');
+var forecastEL = document.querySelector(".forecast")
+var store =[];
+
+
+function handleHistoryBtn(city) {
+    searchInputEl.value = city;
+    handleSearchFormSubmit()
+}
+function getStore() {
+    if (localStorage.searchHistory) {
+        store = JSON.parse(localStorage.searchHistory);
+
+        searchHistoryEl.innerHTML = '';
+
+        store.forEach(city => {
+            var btn2 = document.createElement('button');
+            btn2.addEventListener('click', function () { handleHistoryBtn(city) })
+            btn2.innerText = city;
+            searchHistoryEl.appendChild(btn2);
+        });
+    } else {
+        store = [];
+    }
+};
+
+getStore();
 
 // Displays received results on the page
 function printResults(resultObj) {
@@ -27,8 +53,8 @@ function printResults(resultObj) {
     dateEl.textContent = "Date " + resultObj.coord.date;
 
     var bodyContentEl = document.createElement('p');
-    var weatherIconEl = document.createElement('p');
-    weatherIconEl.textContent = "Icon: " + resultObj.weather[0].icon;
+    var weatherIconEl = document.createElement('img');
+    weatherIconEl.src = "http://openweathermap.org/img/w/" + resultObj.weather[0].icon + ".png";
 
     var bodyContentEl = document.createElement('p');
     var tempEl = document.createElement('p');
@@ -42,7 +68,7 @@ function printResults(resultObj) {
     var windEl = document.createElement('p');
     windEl.textContent = "Wind speed: " + resultObj.wind.speed;
 
-// Appends all the results on the page
+    // Appends all the results on the page
     resultBody.append(cityName);
     resultBody.append(bodyContentEl);
     resultBody.append(weatherIconEl);
@@ -69,6 +95,11 @@ function searchApi(searchInputVal) {
             .then(function (dataRes) {
                 console.log(dataRes.name);
 
+                if (!store.includes(searchInputVal)) {
+                    store = [searchInputVal, ...store];
+                    localStorage.searchHistory = JSON.stringify(store);
+                    getStore();
+                };
 
                 if (!dataRes.name) {
                     console.log('No results found!');
@@ -78,9 +109,70 @@ function searchApi(searchInputVal) {
                     printResults(dataRes);
                 }
             })
+
+        const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&APPID=${apiKey}&units=metric`
+        fetch(forecastUrl)
+            .then(response => response.json())
+            .then((data) => {
+                console.log(data);
+                displayForecast(data.list)
+            })
     } catch (error) {
         console.log(error);
     }
+
+    function displayForecast(forecastData) {
+        forecastEL.innerHTML = ""
+
+        for (let i = 0; i < 7; i++) {
+
+            const card = document.createElement("div")
+            card.setAttribute("class", "card forecast-card")
+            const cardHeader = document.createElement("div")
+            cardHeader.setAttribute("class", "card-header")
+            const cardBody = document.createElement("div")
+            cardBody.setAttribute("class", "card-body")
+            const span = document.createElement("span")
+            const icon = document.createElement("img")
+            icon.setAttribute("src", "https://openweathermap.org/img/w/" + forecastData[i].weather[0].icon + ".png")
+            const h2 = document.createElement("h4")
+            h2.setAttribute("class", "city-name")
+            const temp = document.createElement("p")
+            const humid = document.createElement("p")
+            const wind = document.createElement("p")
+            const forDate = i * 8 + 4
+            const day = new Date(forecastData[forDate].dt * 1000).toDateString()
+            h2.textContent = day
+            temp.textContent = `Temp:${Math.round(forecastData[i].main.temp)}`
+            humid.textContent = `Humidity: ${forecastData[i].main.humidity}`
+            wind.textContent = `Wind Speed: ${forecastData[i].wind.speed}`
+
+            span.append(icon)
+            h2.append(span)
+            cardHeader.append(h2)
+            cardBody.append(temp, humid, wind)
+            card.append(cardHeader, cardBody)
+            forecastEL.append(card)
+
+        }
+    }
+
+    // Saves the city name to local storage
+    var savedCity = JSON.parse(localStorage.getItem('savedCity')) || [];
+    if (!savedCity.includes(data.name)) {
+        savedCity.push(data.name);
+        localStorage.setItem('savedCity', JSON.stringify(savedCity));
+        // Refresh the search history
+        displaySavedCity();
+    }
+
+    function displaySavedCity() {
+        searchHistoryEl.innerHTML = "";
+        var savedCity = JSON.parse(localStorage.getItem("savedCIty")) || [];
+
+    }
+
+
 }
 
 // Search for 5-day forecast of the selected city
@@ -141,7 +233,14 @@ function handleSearchFormSubmit(event) {
     searchApi(searchInputVal);
     searchForecast(searchInputVal);
     searchInputEl.value = '';
+
 }
 
+// Function to handle history button click
+function handleHistoryBtn(city) {
+    searchInputEl.value = city;
+    searchForecast(city);
+}
 // Event listener for the button
-searchBtn.addEventListener('click', handleSearchFormSubmit); 
+searchBtn.addEventListener('click', handleSearchFormSubmit);
+

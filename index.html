@@ -1,28 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/style.css"/>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="assets/css/style.css" />
 
     <title>Weather Dashboard</title>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <h1>Weather Dashboard</h1>
-        </header>
-        <aside>
-            <h2>Search for a City</h2>
-            <form id="search-form">
-            <input id="search-input" type="text" placeholder="Search for a city">
-            <button id="btn">Search</button>
-            <div id="search-history"></div>
-            </form>
-        </aside>
-        <main>
-            <h2>Forecast</h2><span id="result-text"></span>
-            <div id="result-content"></div>
-        </main>
+      <h1>Weather Dashboard</h1>
+    </header>
+    <aside>
+      <h2>Search for a City</h2>
+      <form id="search-form">
+        <input id="search-input" type="text" placeholder="Search for a city" />
+        <button id="btn">Search</button>
+      </form>
+      <div id="search-history"></div>
+    </aside>
+    <main>
+      <h2>Forecast</h2>
+      <span id="result-text"></span>
+      <div id="result-content"></div>
+      <div class="row d-flex flex-row-reverse">
+        <div class="col-md-9 d-flex forecast"></div>
+    </div>
+    </main>
     <script src="./assets/js/script.js"></script>
-</body>
+  </body>
 </html>
