@@ -1,85 +1,14 @@
 var searchFormEl = document.querySelector('#search-form');
 var APIKey = "2871ad72202319cf561e97ce31c20f63";
-var resultTextEl = document.querySelector('#result-text');
-var resultContentEl = document.getElementById('result-content');
+var current = document.querySelector('#current');
+var forecast = document.querySelector('#forecast');
 var searchBtn = document.querySelector('#btn');
 var searchInputEl = document.querySelector('#search-input');
 var searchHistoryEl = document.querySelector('#search-history');
-var forecastEL = document.querySelector(".forecast")
-var store =[];
+var forecastEl = document.querySelector(".forecast");
+var storeHistory = [];
 
-
-function handleHistoryBtn(city) {
-    searchInputEl.value = city;
-    handleSearchFormSubmit()
-}
-function getStore() {
-    if (localStorage.searchHistory) {
-        store = JSON.parse(localStorage.searchHistory);
-
-        searchHistoryEl.innerHTML = '';
-
-        store.forEach(city => {
-            var btn2 = document.createElement('button');
-            btn2.addEventListener('click', function () { handleHistoryBtn(city) })
-            btn2.innerText = city;
-            searchHistoryEl.appendChild(btn2);
-        });
-    } else {
-        store = [];
-    }
-};
-
-getStore();
-
-// Displays received results on the page
-function printResults(resultObj) {
-    console.log(resultObj);
-
-    // set up elements to hold result content
-    var resultCard = document.createElement('div');
-    resultCard.classList.add('card');
-    resultContentEl.append(resultCard);
-
-    var resultBody = document.createElement('div');
-    resultBody.classList.add('card-body');
-    resultCard.append(resultBody);
-
-    var cityName = document.createElement('h3');
-    cityName.textContent = "City: " + resultObj.name;
-
-    var bodyContentEl = document.createElement('p');
-    var dateEl = document.createElement('p');
-    dateEl.textContent = "Date " + resultObj.coord.date;
-
-    var bodyContentEl = document.createElement('p');
-    var weatherIconEl = document.createElement('img');
-    weatherIconEl.src = "http://openweathermap.org/img/w/" + resultObj.weather[0].icon + ".png";
-
-    var bodyContentEl = document.createElement('p');
-    var tempEl = document.createElement('p');
-    tempEl.textContent = "Temperature: " + resultObj.main.temp;
-
-    var bodyContentEl = document.createElement('p');
-    var humidityEl = document.createElement('p');
-    humidityEl.textContent = "Humidity: " + resultObj.main.humidity;
-
-    var bodyContentEl = document.createElement('p');
-    var windEl = document.createElement('p');
-    windEl.textContent = "Wind speed: " + resultObj.wind.speed;
-
-    // Appends all the results on the page
-    resultBody.append(cityName);
-    resultBody.append(bodyContentEl);
-    resultBody.append(weatherIconEl);
-    resultBody.append(tempEl);
-    resultBody.append(humidityEl);
-    resultBody.append(windEl);
-    resultBody.append(dateEl);
-
-};
-
-// API fetch
+/* API fetch
 function searchApi(searchInputVal) {
     var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInputVal + "&appid=" + APIKey + "&units=metric";
 
@@ -121,8 +50,57 @@ function searchApi(searchInputVal) {
         console.log(error);
     }
 
+    // Displays received results on the page
+    function printResults(resultObj) {
+        console.log(resultObj);
+
+        // set up elements to hold result content
+        var resultCard = document.createElement('div');
+        resultCard.classList.add('card');
+        resultContentEl.append(resultCard);
+
+        var resultBody = document.createElement('div');
+        resultBody.classList.add('card-body');
+        resultCard.append(resultBody);
+
+        var cityName = document.createElement('h3');
+        cityName.textContent = "City: " + resultObj.name;
+
+        
+        var dateEl = document.createElement('p');
+        dateEl.textContent = "Date " + resultObj.coord.date;
+
+        var weatherIconEl = document.createElement('img');
+        weatherIconEl.src = "http://openweathermap.org/img/w/" + resultObj.weather[0].icon + ".png";
+
+     
+        var tempEl = document.createElement('p');
+        tempEl.textContent = "Temperature: " + resultObj.main.temp;
+
+       
+        var humidityEl = document.createElement('p');
+        humidityEl.textContent = "Humidity: " + resultObj.main.humidity;
+
+    
+        var windEl = document.createElement('p');
+        windEl.textContent = "Wind speed: " + resultObj.wind.speed;
+
+        // Appends all the results on the page
+        resultBody.append(cityName);
+        resultBody.append(bodyContentEl);
+        resultBody.append(weatherIconEl);
+        resultBody.append(tempEl);
+        resultBody.append(humidityEl);
+        resultBody.append(windEl);
+        resultBody.append(dateEl);
+
+    };
+
     function displayForecast(forecastData) {
-        forecastEL.innerHTML = ""
+        forecastEl.innerHTML = ""
+    // var fiveForecast = document.createElement("h5");
+    // fiveForecast.textContent = "5-Day Forecast:";
+    // forecastEl.append(fiveForecast);
 
         for (let i = 0; i < 7; i++) {
 
@@ -147,30 +125,60 @@ function searchApi(searchInputVal) {
             humid.textContent = `Humidity: ${forecastData[i].main.humidity}`
             wind.textContent = `Wind Speed: ${forecastData[i].wind.speed}`
 
-            span.append(icon)
+            span.appendChild(icon)
             h2.append(span)
             cardHeader.append(h2)
             cardBody.append(temp, humid, wind)
             card.append(cardHeader, cardBody)
-            forecastEL.append(card)
+            forecastEl.append(card)
 
         }
+        printForecastResults(forecastData)
+
     }
 
+
+    function handleHistoryBtn(city) {
+        searchInputEl.value = city;
+        handleSearchFormSubmit()
+    }
+    function getStore() {
+        if (localStorage.searchHistory) {
+            store = JSON.parse(localStorage.searchHistory);
+
+            searchHistoryEl.innerHTML = '';
+
+            store.forEach(city => {
+                var btn2 = document.createElement('button');
+                btn2.addEventListener('click', function () { handleHistoryBtn(city) })
+                btn2.innerText = city;
+                searchHistoryEl.appendChild(btn2);
+            });
+        } else {
+            store = [];
+        }
+    };
+
+    getStore();
+
     // Saves the city name to local storage
+    function displaySavedCity() {
+        searchHistoryEl.innerHTML = "";
     var savedCity = JSON.parse(localStorage.getItem('savedCity')) || [];
     if (!savedCity.includes(data.name)) {
         savedCity.push(data.name);
         localStorage.setItem('savedCity', JSON.stringify(savedCity));
-        // Refresh the search history
+
+    }}
+        
         displaySavedCity();
-    }
+    
 
-    function displaySavedCity() {
-        searchHistoryEl.innerHTML = "";
-        var savedCity = JSON.parse(localStorage.getItem("savedCIty")) || [];
+    // function displaySavedCity() {
+    //     searchHistoryEl.innerHTML = "";
+    //     var savedCity = JSON.parse(localStorage.getItem("savedCIty")) || [];
 
-    }
+    // }
 
 
 }
@@ -241,6 +249,10 @@ function handleHistoryBtn(city) {
     searchInputEl.value = city;
     searchForecast(city);
 }
+
+
 // Event listener for the button
 searchBtn.addEventListener('click', handleSearchFormSubmit);
 
+printForecastResults();
+*/
